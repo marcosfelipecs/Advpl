@@ -5,7 +5,7 @@
 Função Mini Fórmulas, para executar fórmulas
 @author Atilio
 @since 17/12/2017
-@version 1.0
+@version
 @type function
 /*/
  
