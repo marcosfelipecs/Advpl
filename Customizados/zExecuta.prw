@@ -1,14 +1,9 @@
 //Bibliotecas
 #Include "Protheus.ch"
  
-/*/{Protheus.doc} zExecFunc
-Função Mini Fórmulas, para executar fórmulas
-@author Atilio
-@since 17/12/2017
-@version
-@type function
-/*/
- 
+
+//Função para executar funções
+
 User Function ExecFunc()
     Local aArea := GetArea()
     //Variáveis da tela
@@ -40,10 +35,7 @@ User Function ExecFunc()
     RestArea(aArea)
 Return
  
-/*---------------------------------------*
- | Func.: fExecuta                       |
- | Desc.: Executa a fórmula digitada     |
- *---------------------------------------*/
+//Executa a fórmula digitada
  
 Static Function fExecuta()
     Local aArea    := GetArea()
