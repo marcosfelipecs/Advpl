@@ -1,15 +1,10 @@
 //Bibliotecas
 #Include "Protheus.ch"
  
-/*/{Protheus.doc} zMiniForm
-Função Mini Fórmulas, para executar fórmulas
-@author Atilio
-@since 17/12/2017
-@version
-@type function
-/*/
- 
-User Function MiniForm()
+
+//Função para executar funções
+
+User Function ExecFunc()
     Local aArea := GetArea()
     //Variáveis da tela
     Private oDlgForm
@@ -40,10 +35,7 @@ User Function MiniForm()
     RestArea(aArea)
 Return
  
-/*---------------------------------------*
- | Func.: fExecuta                       |
- | Desc.: Executa a fórmula digitada     |
- *---------------------------------------*/
+//Executa a fórmula digitada
  
 Static Function fExecuta()
     Local aArea    := GetArea()

@@ -36,7 +36,20 @@
 			"args": [],
 			"label": "u_TestPergunt",
 			"description": ""
+<<<<<<< HEAD
 		}
 	],
 	"lastProgramExecuted": "u_TestPergunt"
+=======
+		},
+		{
+			"args": [
+				"()"
+			],
+			"label": "u_CalcFator",
+			"description": "()"
+		}
+	],
+	"lastProgramExecuted": "u_CalcFator"
+>>>>>>> 35a64c0d388267eb41a04aa88d7faf22629220f2
 }
