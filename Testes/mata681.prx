@@ -1,0 +1,1808 @@
+#Include "MATA681.CH"
+#include "Protheus.ch" //MARCOS
+
+Static _lNewMRP   := Nil
+Static _oApontCRP := Nil
+Static _lDicCRP   := Nil
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ MATA681  ³ Autor ³ Rodrigo de A. Sartorio ³ Data ³ 07/01/97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Apontamento de Producao baseado no Roteiro de Opera‡oes     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ Void MATA681(void)                                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Generico.                                                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ ATUALIZACOES SOFRIDAS DESDE A CONSTRUCAO INICIAL.                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ PROGRAMADOR  ³ DATA   ³ BOPS ³  MOTIVO DA ALTERACAO                    ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Rodrigo Sart.³29/07/98³xxxxxx³Habilitar pontos de entrada do MATA250   ³±±
+±±³ Rodrigo Sart.³19/10/98³15996A³Acerto no apontamento com perda          ³±±
+±±³ Rodrigo Sart.³19/10/98³18403A³Acerto na gravacao do desdobramento      ³±±
+±±³ Sandro       ³05/03/99³xxxxxx³Rotina de inclusao automatica            ³±±
+±±³ Marcelo Pim. ³18/03/99³META  ³Integra‡„o com m¢dulo SIGAQIP-Processos. ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Descri‡…o ³ PLANO DE MELHORIA CONTINUA                     MATA681.PRX ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ITEM PMC  ³ Responsavel              ³ Data       ³ BOPS               ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³      01  ³                          ³            ³                    ³±±
+±±³      02  ³Flavio Luiz Vicco         ³12/04/2006  ³00000089134         ³±±
+±±³      03  ³                          ³            ³                    ³±±
+±±³      04  ³                          ³            ³                    ³±±
+±±³      05  ³                          ³            ³                    ³±±
+±±³      06  ³                          ³            ³                    ³±±
+±±³      07  ³                          ³            ³                    ³±±
+±±³      08  ³                          ³            ³                    ³±±
+±±³      09  ³                          ³            ³                    ³±±
+±±³      10  ³Flavio Luiz Vicco         ³12/04/2006  ³00000089134         ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Function MATA681(aRotAuto,nOpcx)
+
+LOCAL lA681Cpos:=ExistBlock("A681CPO")
+LOCAL aBackAcho:={}
+LOCAL lMVpar   := IIF (( aRotAuto <> NIL ),IsInCallStack("ACDV023") .or. IsInCallStack("ACDA080") .or. IsInCallStack("ACDV025"),.F.)
+
+Local aStruH6 := {}
+Local nCount
+Local lFiltro := .F.
+Local cApend  := ""
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas no sistema.                             ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE nOpcAuto := nOpcx
+PRIVATE lProdAut := .F.
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas para indicar qual apontamento esta sendo utilizado ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE l680:=.F.,l681:=.T.,l682:=.F., l250 := .F. ,l240 := .F.,l241 := .F.
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveil utilizada para verificar a data do ultimo fechamento          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Private dDataFec := MVUlmes()
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas nos pontos de entrada do MATA250                   ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE lSD3250IT:= (ExistTemplate("SD3250I"))
+PRIVATE lSD3250I := (ExistBlock("SD3250I"))
+PRIVATE lSD3250E := (ExistBlock("SD3250E"))
+
+Private l681Auto := ( aRotAuto <> NIL )
+Private l680Auto := .F.
+Private nFCICalc := SuperGetMV("MV_FCICALC",.F.,0)
+
+Private lExistePM   := .F. //Indica se existe produção a maior para permitir requisitar quando o empenho estiver zerado
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Array com os campos que devem aparecer na Enchoice                      ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE aAcho:={}
+Private lDelOpSC := GetMV("MV_DELOPSC")== "S"
+Private nQntPerd	:= 0
+Private nQntProd	:= 0
+
+aStruH6 := SH6->(DBStruct())
+For nCount := 1 To Len(aStruH6)
+	cX3Usado := (GetSx3Cache(aStruH6[nCount,1],'X3_USADO'))
+	If X3USO(cX3Usado) .And. !(AllTrim(aStruH6[nCount,1]) == "H6_MOTIVO") .And. !(AllTrim(aStruH6[nCount,1]) == "H6_DESCRI") .And. If(AllTrim(aStruH6[nCount,1]) == "H6_PERIMP",If(nFCICalc==1,.T.,.F.),.T.)
+		AADD(aAcho,AllTrim(aStruH6[nCount,1]))
+	EndIf
+Next nCount
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Executa P.E. para selecionar campos que devem aparecer na Enchoice      ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If lA681Cpos
+	aBackAcho:=ACLONE(aAcho)
+	aAcho:=ExecBlock("A681CPO",.F.,.F.,aAcho)
+	If Valtype(aAcho) != "A"
+		aAcho:=ACLONE(aBackAcho)
+	EndIf
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Variaveis utilizadas no Apontamento de Refugo por Motivo     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE lSavePerda:=.F.
+PRIVATE aPerda  := {},aHdPerda := {}
+PRIVATE nPosQuant,nPosMot,nPosDesc,nPosTipo,nPosCod,nPosLoc,nPosLote
+PRIVATE aAC := {STR0011 , STR0012} //"Abandona"###"Confirma"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define Array contendo as Rotinas a executar do programa  ³
+//³ ----------- Elementos contidos por dimensao -----------  ³
+//³ 1. Nome a aparecer no cabecalho                          ³
+//³ 2. Nome da Rotina associada                              ³
+//³ 3. Usado pela rotina                                     ³
+//³ 4. Tipo de Transa‡„o a ser efetuada                      ³
+//³    1 - Pesquisa e Posiciona em um Banco de Dados         ³
+//³    2 - Simplesmente Mostra os Campos                     ³
+//³    3 - Inclui registros no Bancos de Dados               ³
+//³    4 - Altera o registro corrente                        ³
+//³    5 - Remove o registro corrente do Banco de Dados      ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE aRotina := MenuDef()
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Define o cabecalho da tela de atualizacoes               ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE cCadastro := OemToAnsi(STR0005)	//"Produ‡„o PCP Mod2"
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Pega a variavel que identifica se o calculo do custo e' :    ³
+//³               O = On-Line                                    ³
+//³               M = Mensal                                     ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE cCusMed := GetMv("MV_CUSMED")
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ lPerdInf: Indica se a perda e informativa ou nao 			 ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PRIVATE lPerdInf := SuperGetMV("MV_PERDINF",.F.,.F.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³Array para o controle contábil de correlativos³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Private aCtbDia	 := {}
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Abaixo checa se executado procedimento "TimeH6x" para ajuste de campos hora do SH6  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If ! A680ChkH6Time()
+	Return
+Endif
+
+ASHICalen(,,, .T.)
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inclui pergunta no SX1                                        ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+pergunte("MTA680",.F.)
+IIF (lMVpar,MV_PAR04 := 1 , Nil)
+
+If ! l681Auto
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Inicializa perguntas deste programa                          ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ mv_par01 - Se mostra e permite digitar lancamentos contabeis   ³
+	//³ mv_par02 - Se deve aglutinar os lancamentos contabeis          ³
+	//³ mv_par03 - Tempo do Apontamento (1) Normal (2) Centesimal      ³
+	//³ mv_par04 - Permite somente apontamento Tempo (1) Sim (2) Nao   ³
+	//³ mv_par05 - Verifica saldo em cada apontamento(1) Sim (2) Nao   ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Ativa tecla F12 para acionar perguntas                         ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	Set Key VK_F12 To FAtiva()
+Endif
+
+If cCusMed == "O"
+	PRIVATE nHdlPrv // Endereco do arquivo de contra prova dos lanctos cont.
+	PRIVATE lCriaHeader := .T. // Para criar o header do arquivo Contra Prova
+	PRIVATE cLoteEst  // Numero do lote para lancamentos do estoque
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Posiciona numero do Lote para Lancamentos do Faturamento     ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	dbSelectArea("SX5")
+	dbSeek(xFilial("SX5")+"09EST")
+	cLoteEst:=IIF(Found(),Trim(X5Descri()),"EST ")
+	PRIVATE nTotal := 0  // Total dos lancamentos contabeis
+	PRIVATE cArquivo  // Nome do arquivo contra prova
+Endif
+	//APT.PENDENTE
+	PRIVATE cPCPPEND   := "1"
+	PRIVATE lAptPende  := .F.
+	PRIVATE lGravaPen  := .F.
+	Private cMsgErro	   := ""
+
+If l681Auto
+
+	PRIVATE aCloneAuto := aclone(aRotAuto)
+	//Verifica se vem do ACDA080
+	IF lMVpar // IsInCallStack('ACDA080') .AND.  IsInCallStack('CB025GRV')
+		cApend := SuperGetMV("MV_APTPEND",.F.,"1")
+		AADD(aRotAuto,{"PENDENTE",cApend ,NIL} )
+	EndIf
+
+	//APT.PENDENTE
+		nPosRotOr := aScan(aRotAuto,{|x| x[1] == "PENDENTE"}) //Verifica Tag no Apontamento
+		IF nPosRotOr > 0
+			lAptPende := .T.
+			cPCPPEND  :=  cValtoChar(aRotAuto[nPosRotOr][2]) // Posicione("T4L",1,xFilial("T4L")+aRotAuto[nPosRotOr][2],"T4L_DADO")
+
+		EndIf
+
+		IF cPCPPEND == "3" .AND. !lMVpar
+			cMsgErro	:=  STR0023 //"3 - Grava todos apontamentos como pendentes"
+			a250GrvPnd(aCloneAuto,STR0023, cMsgErro) //"MATA681"
+			AutoGrLog(STR0023)
+			Return
+		ENDIF
+
+	If nOpcx == 7
+		nPos := 0
+		nPos := aScan(aRotAuto,{|x| x[1] == 'AUTRECNO'})
+		If nPos > 0
+			SH6->(dbGoTo(aRotAuto[nPos,2]))
+		Else
+			SeekAuto("SH6",aRotAuto)
+		EndIf
+		MBrowseAuto(nOpcx,aRotAuto,"SH6",.T.)
+	else
+		// Verificar se os campos de data/hora início e fim foram informados no array
+		// Se não foram, então retirar do array aAcho, para não executar o gatilho dos campos
+		If PCPIntgPPI()
+
+			if aScan(aRotAuto,{|x| x[1] == 'H6_HORAINI'}) == 0
+
+				nPos := aScan(aAcho, {|x| x == 'H6_HORAINI'})
+				aDel(aAcho, nPos)
+
+				nPos := aScan(aAcho, {|x| x == 'H6_HORAFIN'})
+				aDel(aAcho, nPos)
+
+				aSize(aAcho, Len(aAcho) - 2)
+			Endif
+		Else
+			If nOpcx == 5 .Or. nOpcx == 4
+				nPos := 0
+				nPos := aScan(aRotAuto,{|x| x[1] == 'AUTRECNO'})
+				If nPos > 0
+					SH6->(dbGoTo(aRotAuto[nPos,2]))
+					If nOpcx == 4
+						lFiltro := .F.
+					Else
+						lFiltro := .T.
+					EndIf
+				Else
+					nPos := 0
+					nPos := aScan(aRotAuto,{|x| x[1] == 'INDEX'})
+					If nPos > 0
+						EasySeekAuto("SH6",aRotAuto,aRotAuto[nPos,2])
+						lFiltro := .T.
+					EndIf
+				EndIf
+				If lFiltro
+					MBrowseAuto(nOpcx,aRotAuto,"SH6",.F.)
+					Return
+				EndIf
+
+			EndIf
+		Endif
+		lMsErroAuto := .f.
+		MsRotAuto(nOpcx,aRotAuto,"SH6",aAcho)
+
+		//APT.PENDENTE
+		If  lMSErroAuto .And. ! lGravaPen .AND. ! lMVpar // Se Tiver erros na Rotina MsRotAuto o retorno é verdadeiro
+			IF l681Auto .AND. cPCPPEND <> "1"   //grava as pendências de apontamento para serem processadas posteriormente
+				IF TableInDic("T4K")
+					IF cPCPPEND # "4" // Quando for reprocessa, não precissa gravar na tabelas
+						cMsgErro	:= ErrosApt()
+						a250GrvPnd(aCloneAuto,STR0024,cMsgErro)	//"MATA681"
+						lGravaPen	:= .T. // Sinaliza que já gravou o pedido com pendente
+					EndIf
+				EndIf
+			EndIf
+		Endif
+	EndIf
+
+	Return
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Endereca a funcao de BROWSE                              ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+mBrowse( 6, 1,22,75,"SH6")
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Desativa tecla que aciona perguntas                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Set Key VK_F12 TO
+
+/*
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³A681Visual³ Autor ³ Rodrigo de A. Sartorio³ Data ³ 11/07/97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Programa para visualizar apontamento de producao           ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ A681Visual(ExpC1,ExpN1,ExpN2)                              ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ ExpC1 = Alias do arquivo                                   ³±±
+±±³          ³ ExpN1 = Numero do registro                                 ³±±
+±±³          ³ ExpN2 = Numero da opcao selecionada                        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ MATA240                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Function A681Visual(cAlias,nReg,nOpc)
+Local aButtons   := {}
+Local aUsButtons := {}
+
+dbSelectArea(cAlias)
+If H6_TIPO == "I"
+	Help(" ",1,"A680NAO")
+	Return
+EndIf
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Ponto de entrada p/ adicionar botoes de usuario na EnchoiceBar³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If ExistBlock( "MA680BUT" )
+	If ValType( aUsButtons := ExecBlock( "MA680BUT", .F., .F.,{nOpc} ) ) == "A"
+		AEval( aUsButtons, { |x| AAdd( aButtons, x ) } )
+	EndIf
+EndIf
+AxVisual(cAlias,nReg,nOpc,aAcho,,,"A680MEMVAR",aButtons)
+
+//----------------------------------------------------------------------
+/*Abre grid apresentando operações da ordem*/
+//----------------------------------------------------------------------
+Static Function GridOperacs(aOperacs)
+	Local oDlgUpd, nI, oList, oPanel3
+	Local cOrigem := " "
+
+	If aOperacs[1,2] == STR0016
+	   cOrigem := " (SHY)"
+	Else
+	  If aOperacs[1,2] == STR0017
+	     cOrigem := " (SG2)"
+	  EndIf
+	EndIf
+
+	DEFINE DIALOG oDlgUpd TITLE STR0019 + cOrigem FROM 0, 0 TO 22, 75 SIZE 340, 210 PIXEL //"Operações da Ordem de Produção"
+
+	oList := TWBrowse():New( 01, 01, 170, 105,,{STR0018,STR0022},,oDlgUpd,,,,,,,,,,,,.F.,,.T.,,.F.,,,)//"Operação", "Descrição"
+
+	oList:SetArray(aOperacs)
+	oList:bLine := {|| {aOperacs[oList:nAT,1],aOperacs[oList:nAt,3]}}
+
+	ACTIVATE DIALOG oDlgUpd CENTER
+Return Nil
+
+//----------------------------------------------------------------------
+/*Busca operações da ordem a chama GridOperacs*/
+//----------------------------------------------------------------------
+Static Function OperacOP()
+	Local aOperacs := {}
+
+	If Empty(M->H6_OP)
+		MsgAlert(STR0015)//"Selecione uma ordem de produção antes de verificar as operações"
+	Else
+		dbSelectArea("SC2")
+		SC2->(dbSetOrder(1))
+		SC2->(dbSeek(xFilial("SC2")+M->H6_OP))
+		dbSelectArea("SB1")
+		SB1->(dbSetOrder(1))
+		SB1->(dbSeek(xFilial("SB1")+SC2->C2_PRODUTO))
+		dbSelectArea("SG2")
+		SG2->(dbSetOrder(1))
+		dbSelectArea("SHY")
+		SHY->(dbSetOrder(1))
+		If SHY->(dbSeek(xFilial("SHY")+M->H6_OP))
+			While !SHY->(Eof()) .And. xFilial("SHY")+M->H6_OP == SHY->(HY_FILIAL+HY_OP)
+				aAdd(aOperacs,{SHY->HY_OPERAC,STR0016,SHY->HY_DESCRI})//"Operação da Ordem de Produção(SHY)"
+				SHY->(dbSkip())
+			End
+		ElseIf !Empty(SC2->C2_ROTEIRO) .And. SG2->(dbSeek(xFilial("SG2")+SC2->(C2_PRODUTO+C2_ROTEIRO)))
+			While !SG2->(Eof()) .And. xFilial("SG2")+SC2->(C2_PRODUTO+C2_ROTEIRO) == SG2->(G2_FILIAL+G2_PRODUTO+G2_CODIGO)
+
+				If !Empty(SG2->G2_DTINI)
+					If SG2->G2_DTINI > SC2->C2_DATPRI
+						SG2->(dbSkip())
+						Loop
+					EndIf
+				EndIf
+				If !Empty(SG2->G2_DTFIM)
+					If SG2->G2_DTFIM < SC2->C2_DATPRI
+						SG2->(dbSkip())
+						Loop
+					EndIf
+				EndIf
+
+				aAdd(aOperacs,{SG2->G2_OPERAC,STR0017,SG2->G2_DESCRI})//"Operação do Roteiro(SG2)"
+
+				SG2->(dbSkip())
+			End
+		ElseIf !Empty(SB1->B1_OPERPAD) .And. SG2->(dbSeek(xFilial("SG2")+SB1->(B1_COD+B1_OPERPAD)))
+			While !SG2->(Eof()) .And. xFilial("SG2")+SB1->(B1_COD+B1_OPERPAD) == SG2->(G2_FILIAL+G2_PRODUTO+G2_CODIGO)
+
+				If !Empty(SG2->G2_DTINI)
+					If SG2->G2_DTINI > SC2->C2_DATPRI
+						SG2->(dbSkip())
+						Loop
+					EndIf
+				EndIf
+				If !Empty(SG2->G2_DTFIM)
+					If SG2->G2_DTFIM < SC2->C2_DATPRI
+						SG2->(dbSkip())
+						Loop
+					EndIf
+				EndIf
+
+				aAdd(aOperacs,{SG2->G2_OPERAC,STR0017,SG2->G2_DESCRI})//"Operação do Roteiro(SG2)"
+
+				SG2->(dbSkip())
+			End
+		ElseIf SG2->(dbSeek(xFilial("SG2")+SB1->(B1_COD+StrZero(1, Len(SG2->G2_CODIGO)))))
+			While !SG2->(Eof()) .And. xFilial("SG2")+SB1->(B1_COD+StrZero(1, Len(SG2->G2_CODIGO))) == SG2->(G2_FILIAL+G2_PRODUTO+G2_CODIGO)
+
+				If !Empty(SG2->G2_DTINI)
+					If SG2->G2_DTINI > SC2->C2_DATPRI
+						SG2->(dbSkip())
+						Loop
+					EndIf
+				EndIf
+				If !Empty(SG2->G2_DTFIM)
+					If SG2->G2_DTFIM < SC2->C2_DATPRI
+						SG2->(dbSkip())
+						Loop
+					EndIf
+				EndIf
+
+				aAdd(aOperacs,{SG2->G2_OPERAC,STR0017,SG2->G2_DESCRI})//"Operação do Roteiro(SG2)"
+
+				SG2->(dbSkip())
+			End
+		Else
+			aAdd(aOperacs,{"","",""})
+		EndIf
+		If Len(aOperacs) < 1
+			aAdd(aOperacs,{"","",""})
+		EndIf
+		GridOperacs(aOperacs)
+	EndIf
+Return Nil
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³A681Inclui³ Autor ³ Rodrigo de A. Sartorio ³ Data ³ 07/01/97 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Programa de inclusao do movimento de estoque                ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ Void A680Inclui(cExp1,nExp1,nExp2)                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ cExp1 = Alias do Arquivo                                    ³±±
+±±³          ³ nExp1 = Numero do registro                                  ³±±
+±±³          ³ cExp1 = Opcao escolhida                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ MATA681                                                     ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Function A681Inclui(cAlias,nReg,nOpc)
+Local nOpca		 := 0
+Local lEncerraOP :=.F.
+Local lAutoEncOP :=.F.
+Local lMt681Inc  := Existblock("MT681INC")
+Local lMt681AInc := Existblock("MT681AIN")
+Local lMt681But  := Existblock("MT681BUT")
+Local lMt681Can  := Existblock("MT681CAN")
+Local lMT680QUA  := .T.
+Local aChkBaixaC := Nil
+Local aButtons   := {}
+Local aUsrBut    := {}
+Local lGeraD3Pro := .F.
+Local aAreaSD3   := {}
+Local aAreaSH6   := {}
+Local aPedidos   := {}
+Local nX		 := 0
+Local cDocSD3    := ""
+Local cOpAtual   := ' '
+Local cOperAtual := ' '
+Local cSeqAtual  := ' '
+Local nPercPrM   := 0
+Local aDigLot    := {}
+Local lDISTMOV   := SuperGetMV("MV_DISTMOV",.F.,.F.)
+Local cQipMat	 := GetNewPar("MV_QIPMAT","N")
+Local cReqAut    := A250ReqAut(GetMv("MV_REQAUT"))
+Local nPrapont   := GetNewPar("MV_PRAPONT",2)  // padrão default 2
+Local lEncerOp   := SuperGetMV("MV_ACDOPPT",.F.,.F.)
+Local lMVpar     := IsInCallStack("ACDV023") .or. IsInCallStack("ACDV025") .or. IsInCallStack("ACDA080")
+Local lConsumo   := .F.
+Local aConsumo   := {}
+Local aCusto     := {}
+Local lCoProduto := .F.
+Local aCoProduto := {}
+Local nPos       := 0
+Local nPosItems  := 0
+Local nQtdPerda  := 0
+Local nI         := 0
+Local lWmsNew 	 := SuperGetMv("MV_WMSNEW",.F.,.F.)
+local nPosGrv	 := 0
+local lRetPE	 := .F.
+Local lIntQIP    := .F.
+Local lAponta    := .F.
+Local lLoteCtl   := .T.
+
+Local lDelTBMRP   := _lNewMRP == NIL
+Local lIntNewMRP  := Iif(_lNewMRP == Nil, FindFunction("Ma650MrpOn") .AND. Ma650MrpOn(@_lNewMRP),_lNewMRP)
+Local aMRPxJson   := Iif(lIntNewMRP, {{}, JsonObject():New()}, Nil) //{aDados para commit, JsonObject() com RECNOS} - Integracao Novo MRP
+
+PRIVATE nRegD3
+//PRIVATE aTrocaF3:={{"H6_OP","SC2"}}
+PRIVATE lEnvCQProd := .F.
+PRIVATE lUltOper   :=Nil
+PRIVATE cLocCQOrig := ""
+PRIVATE lRollWMS   := .F.  //Variavel utilizada para rollback quando existir validação wms
+PRIVATE cDocD3Ini  := ""
+PRIVATE lProcQIP   := .F.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Impede Inclus”es com Data Inferior ou Igual a do Fechamento  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Private lModZero := .T.
+
+If dDataBase <= dDataFec
+	Help (' ', 1, 'FECHTO')
+	Return Nil
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Inicializa a gravacao dos lancamentos do SIGAPCO          ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PcoIniLan("000152")
+
+If lMt681But
+	If Valtype( aUsrBut := Execblock( "MT681BUT", .F., .F. ) ) == "A"
+		aEval( aUsrBut, { |x| aAdd( aButtons, x ) } )
+	EndIf
+EndIf
+
+aAdd( aButtons, {,{|| OperacOP()},STR0019} )//"Operações da Ordem de Produção"
+
+If hasDicCRP()
+	aAdd(aButtons, {,{|| apontCRP()}, STR0029} ) // "Apontamentos CRP"
+	Set Key VK_F8 To apontCRP()
+EndIf
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Ativa a tecla F4.                                            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+Set Key VK_F4 TO A681ShowF4()
+
+If l681Auto
+	nPos := aScan(aRotAuto,{|x|Upper(AllTrim(x[1]))=="AUTCONSUMO"})
+	If nPos > 0
+		lConsumo := .T.
+		aConsumo := aRotAuto[nPos,2]
+	EndIf
+	nPos := aScan(aRotAuto,{|x|Upper(AllTrim(x[1]))=="AUTCOPRODU"})
+	If nPos > 0
+		lCoProduto := .T.
+		aCoProduto := aRotAuto[nPos,2]
+	EndIf
+
+	nPos := aScan(aCloneAuto,{|x|Upper(AllTrim(x[1]))=="ENCERRAOP"})
+	If nPos > 0
+		lAutoEncOP := IIf(aCloneAuto[nPos,2] == "S", .T., .F.)
+	EndIf
+EndIf
+
+Begin Transaction
+
+	ASHICalen(,,,.T.)
+
+	// Alterado por Alex Sandro Valario
+	If ( l681Auto )
+
+		nOpca := AxIncluiAuto(cAlias,"A680TudoOk()","A680AtuInc()")
+
+		if nOpca = 0
+             aAdd(aRotAuto,{"GRAVA","4",NIL})
+        Endif
+
+	    nPosGrv:= aScan(aRotAuto,{|x| x[1] == "GRAVA"})
+		IF l681Auto .AND. cPcpPend <> '1' .AND. nPosGrv>0
+			disarmTransaction()
+			Break
+		EndIf
+	Else
+		nOpca := AxInclui(cAlias,nReg,nOpc,aAcho,,,"A680TudoOk()",,"A680AtuInc()",aButtons)
+	EndIf
+
+	If nOpca == 1
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Verifica se o custo medio e' calculado On-Line               ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If cCusMed == "O" .And. lCriaHeader
+			lCriaHeader := .F.
+			nHdlPrv := HeadProva(cLoteEst,"MATA250",Subs(cUsuario,7,6),@cArquivo)
+		EndIf
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Ponto de Entrada antes do inicio da inclusao de dados        ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If lMt681AInc
+			Execblock('MT681AIN', .F., .F.)
+		Endif
+
+		//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+		//³ Envia p/func. de atualizacoes (SD3,SB2,SB3,SC2,..) ³
+		//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		If A680GeraD3("MOD",SH6->H6_IDENT)
+			A240Atu()
+		EndIf
+		If lModZero
+			If SH6->H6_QTDPROD > 0 .Or. SH6->H6_QTDPERD > 0
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Busco por componentes a serem baixados na operacao ³
+				//³ apontada                                           ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				If !lConsumo
+					aBaixaSGF := A637BxComp(SH6->H6_PRODUTO, A680RotPad(), SH6->H6_OPERAC, SH6->H6_OP)
+				Else
+					aBaixaSGF := Nil
+				EndIf
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Checa se existe amarracao operacao x componente e  ³
+				//³ se ja foi baixado o saldo empenhado para nao atuali³
+				//³ zar novamente saldo empenhado.                     ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				aChkBaixaC := A680CkCmpP(SH6->H6_PRODUTO,SH6->H6_OPERAC,SH6->H6_OP)
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Caso a perda nesta operacao seja total, verifica se³
+				//³ deve encerrar a OP ou nao.                         ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				lEncerraOP:=.F.
+				If SH6->H6_PT == "T" .And. QtdComp(SH6->H6_QTDPROD) == QtdComp(0) .And. QtdComp(SH6->H6_QTDPERD) > QtdComp(0)
+					If lEncerOp .And. (IsInCallStack("ACDV025") .Or.  IsInCallStack("ACDV023") .or. IsInCallStack("ACDA080")) .And. SH6->(A681ACDPT(H6_OP,H6_PRODUTO,H6_OPERAC)) .And. A680UltOper()
+						lEncerraOP := lEncerOp
+					ElseIf l681Auto
+						lEncerraOP:= lAutoEncOP
+					ElseIf !A680UltOper()
+
+							// Salva OP atual
+							nOpAtual  := SH6->H6_OP
+
+					   		aAreaSH6  := SH6->(GetArea())
+
+					   		SH6->(dbclosearea())
+
+							dbSelectArea("SH6")
+							SH6->(dbSetOrder(1))
+							SH6->(dbGotop())
+							SH6->(dbSeek(xFilial("SH6")+nOpAtual))
+
+							//Busca pelas perdas que já foram apontadas
+							While !Eof() .And. SH6->H6_FILIAL + SH6->H6_OP == xFilial("SH6") + nOpAtual
+				    			If SH6->H6_QTDPERD > 0
+					   				nQtdPerda += SH6->H6_QTDPERD
+				    			EndIf
+								dbSkip()
+							EndDo
+
+							SH6->(dbclosearea())
+
+							dbSelectArea("SH6")
+							SH6->(dbSetOrder(1))
+							SH6->(dbGotop())
+
+							RestArea(aAreaSH6)
+
+							//Diminui a perda atual - desconsidera, se houver.
+							If SH6->H6_QTDPERD > 0 .and. nQtdPerda > 0
+								nQtdPerda := nQtdPerda - SH6->H6_QTDPERD
+							EndIf
+
+							dbSelectArea("SC2")
+							SC2->(dbSetOrder(1))
+							SC2->(dbSeek(xFilial("SC2")+SH6->H6_OP))
+
+							If SH6->H6_QTDPERD >= (SC2->C2_QUANT - (SC2->C2_QUJE + nQtdPerda))
+								If ExistBlock("MTPERDA")
+									lRetPE   := ExecBlock("MTPERDA",.F.,.F.,)
+								EndIf
+								If lRetPE
+									lEncerraOP:= .T.
+								Else
+									lEncerraOP:= Aviso(STR0007,STR0008,{STR0009,STR0010}) == 1 //"Atenção"###"Este apontamento indica PERDA TOTAL da OP. Encerra produção da OP nessa operação?"###"Sim"###"Nao"
+								EndIf
+							Else
+
+								nOpAtual   := SH6->H6_OP
+								nOperAtual := SH6->H6_OPERAC
+								nSeqAtual  := SH6->H6_SEQ
+								lExistBoa  := .F.
+								nSomaBoa   := 0
+
+					   			aAreaSH6  := SH6->(GetArea())
+
+					   			SH6->(dbclosearea())
+
+					   			dbSelectArea("SH6")
+								dbSetOrder(1)
+								dbGotop()
+								dbSeek(xFilial("SH6")+nOpAtual)
+
+								While !Eof() .And. SH6->H6_FILIAL + SH6->H6_OP == xFilial("SH6") + nOpAtual
+					   				If SH6->H6_FILIAL + SH6->H6_OP == xFilial("SH6") + nOpAtual .And. SH6->H6_OPERAC + SH6->H6_SEQ = nOperAtual + nSeqAtual
+					    				If SH6->H6_QTDPROD > 0
+						   					lExistBoa := .T.
+						   					nSomaBoa += SH6->H6_QTDPROD
+						   					Exit
+					    				EndIf
+									EndIf
+									dbSkip()
+								EndDO
+
+								If ((!lExistBoa) .Or. ((SC2->C2_QUANT-nSomaBoa) = (SC2->C2_QUANT - SC2->C2_QUJE)))
+									lEncerraOP:= Aviso(STR0007,STR0008,{STR0009,STR0010}) == 1 //"Atenção"###"Este apontamento indica PERDA TOTAL da OP. Encerra produção da OP nessa operação?"###"Sim"###"Nao"
+								EndIf
+
+								SH6->(dbclosearea())
+
+								dbSelectArea("SH6")
+								dbSetOrder(1)
+								dbGotop()
+
+								RestArea(aAreaSH6)
+							EndIf
+					Else
+						nOpAtual   := SH6->H6_OP
+						nOperAtual := SH6->H6_OPERAC
+						nSeqAtual  := SH6->H6_SEQ
+						lExistBoa  := .F.
+
+						aAreaSH6  := SH6->(GetArea())
+
+						If SH6->H6_PT = 'T'
+							lEncerraOP :=.T.
+						EndIf
+
+						SH6->(dbclosearea())
+
+						dbSelectArea("SH6")
+						dbSetOrder(1)
+						dbGotop()
+						dbSeek(xFilial("SH6")+nOpAtual)
+
+						While !Eof() .And. SH6->H6_FILIAL + SH6->H6_OP == xFilial("SH6") + nOpAtual
+					   		If SH6->H6_FILIAL + SH6->H6_OP == xFilial("SH6") + nOpAtual .And. SH6->H6_OPERAC + SH6->H6_SEQ = nOperAtual + nSeqAtual
+					    		If SH6->H6_QTDPROD > 0
+									lExistBoa := .T.
+									Exit
+					    		EndIf
+							EndIf
+							dbSkip()
+						EndDO
+
+						If !lExistBoa
+							lEncerraOP:= Aviso(STR0007,STR0008,{STR0009,STR0010}) == 1 //"Atenção"###"Este apontamento indica PERDA TOTAL da OP. Encerra produção da OP nessa operação?"###"Sim"###"Nao"
+						EndIf
+
+						SH6->(dbclosearea())
+
+						dbSelectArea("SH6")
+						dbSetOrder(1)
+						dbGotop()
+
+						RestArea(aAreaSH6)
+					EndIf
+				EndIf
+
+				SC2->(dbSetOrder(1))
+				If SC2->(dbSeek(xFilial("SC2")+Alltrim(SH6->H6_OP)))
+					nPercPrM := (SH6->H6_QTMAIOR / SC2->C2_QUANT)
+				EndIf
+
+				If If(!(lUltOper==Nil),lUltOper,A680UltOper()) .Or. lEncerraOP
+					lIntQIP    := IntQIP(SH6->H6_PRODUTO,"2")
+					lAponta    := GetMV("MV_QINSPEC",.T.,"1") == '2'
+					lLoteCtl   := .T.
+					If lIntQIP .AND. lAponta .And. Rastro(SH6->H6_PRODUTO)
+						If Empty (SH6->H6_LOTECTL)
+							lLoteCtl := .F.
+						EndIf
+					EndIf
+
+					lGeraD3Pro := .T.
+					A680GeraD3("PR0",SH6->H6_IDENT,lEncerraOP)
+
+					If !lLoteCtl
+						lRet := QIPGNSH6(.F.)
+						If !lRet
+							disarmTransaction()
+							Break
+							Return
+						EndIf
+					EndIf
+
+					cA240End := A680GetEnd()
+					cA680Ser := A680GetSer()
+					lRollWMS := .F.
+
+					lRet := A250Atu(cAlias,SH6->H6_IDENT,@aPedidos,,,,IIF(!Empty(aBaixaSGF) .And. !lPerdInf,SH6->H6_QTDPERD,),,,,,aChkBaixaC,,,nPercPrM,lEncerraOP,!lConsumo,@aMRPxJson)
+					If !lRet .Or. lRollWMS
+						Return
+					EndIf
+					//APT.PENDENTE
+					IF ! lRet .AND. Type("aRotAuto") == "A"
+						aAdd(aRotAuto,{'GRAVA',"2",NIL})
+					EndIf
+
+					SF5->(MsSeek(xFilial("SF5")+GetMV("MV_TMPAD")))
+
+					If (lEncerraOP .Or. (A680UltOper() .And. SH6->H6_PT == "T")) .And.;
+					  !(SH6->H6_PT == "T" .And. (cReqAut == "D" .Or. SF5->F5_ATUEMP == "N")) //Neste caso fez o encerramento no MATA250 ( A250Atu )
+						A250End(.T., .F., @aMRPxJson)
+
+						If hasDicCRP()
+							MATA681ApontamentoCRP():encerraOrdemDeProducao(SH6->H6_OP)
+						EndIf
+					EndIf
+
+					If lSavePerda
+						lSavePerda := A680GrPerd(lGeraD3Pro,@aPerda,@aHdPerda,SH6->H6_IDENT)
+					EndIf
+				ElseIf aBaixaSGF # Nil
+					/*
+					If lSavePerda
+						lSavePerda := A680GrPerd(lGeraD3Pro,@aPerda,@aHdPerda)
+					EndIf
+					*/
+					cDocSD3 := CriaVar("D3_DOC")
+					If !lConsumo
+						lRollWMS := .F.
+						lRet := A250Atu(cAlias, SH6->H6_IDENT,,,aBaixaSGF, SH6->H6_QTDPROD, SH6->H6_QTDPERD, SH6->H6_OP, If(Empty(cDocSD3),SC2->C2_NUM,cDocSD3), SH6->H6_DTAPONT, SH6->H6_PT, aChkBaixaC,,,nPercPrM,Nil,Nil,@aMRPxJson)
+						If !lRet .Or. lRollWMS
+							Return
+						EndIf
+						//APT.PENDENTE
+						IF ! lRet .AND. Type("aRotAuto") == "A"
+							aAdd(aRotAuto,{'GRAVA',"2",NIL})
+						EndIf
+
+					EndIf
+					If lSavePerda
+						lSavePerda := A680GrPerd(lGeraD3Pro,@aPerda,@aHdPerda)
+					EndIf
+				Endif
+
+				If !lWmsNew ;
+					.And. !l681Auto //não entra se for execauto.
+					//ÚÄÄÄÄÄ;ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+					//³ Abre uma tela que permito ao usuário endereçar os produtos  ³
+					//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+					If lDISTMOV .And. !IsProdMod(SD3->D3_COD) .And. Localiza(SH6->H6_PRODUTO) .And. A680UltOper()
+						aADD(aDigLot,{	'0001',;
+							SD3->D3_COD,;
+							SD3->D3_LOCAL,;
+							SD3->D3_LOTECTL,;
+							SD3->D3_NUMLOTE,;
+							SD3->D3_DTVALID,;
+							SD3->D3_QUANT,;
+							SD3->D3_NUMSEQ,;
+							SD3->D3_DOC,;
+							SerieNfId("SD1",5,"D1_SERIE"),;
+							CriaVar("D1_FORNECE"),;
+							CriaVar("D1_LOJA"),;
+							.F.	 })
+						A103DigEnd(aDigLot)
+					EndIf
+				Else
+					If IntWms(SD3->D3_COD) .And. A680UltOper()
+						WmsIntOp(SD3->(Recno()),A680GetEnd(),A680GetSer())
+					EndIf
+				EndIf
+
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Caso tenha liberado pedidos atraves da producao,   ³
+				//³ atualiza campo no SC5                              ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				If Len(aPedidos) > 0
+					MaLiberOk(aPedidos)
+				EndIf
+				A250Nutri(SH6->H6_OP)
+				If lSavePerda
+					If lGeraD3Pro
+						aAreaSD3 := SD3->(GetArea())
+						dbSelectArea("SD3")
+						dbSetOrder(1)
+						dbSeek(xFilial("SD3")+SH6->H6_OP+SH6->H6_PRODUTO)
+						While SD3->(!EOF()) .And. xFilial("SD3")+SH6->(H6_OP+H6_PRODUTO) == SD3->(D3_FILIAL+D3_OP+D3_COD)
+							If SD3->D3_IDENT == SH6->H6_IDENT .And. SD3->D3_CF == "PR0" .And. SD3->D3_ESTORNO <> "S"
+								GravaSBC(SH6->H6_OP,SH6->H6_OPERAC,SH6->H6_RECURSO,"MATA680",SD3->D3_NUMSEQ,SH6->H6_IDENT)
+								Exit
+							EndIf
+							SD3->(dbSkip())
+						EndDo
+						RestArea(aAreaSD3)
+					Else
+						GravaSBC(SH6->H6_OP,SH6->H6_OPERAC,SH6->H6_RECURSO,"MATA680",,SH6->H6_IDENT)
+					EndIf
+					aPerda:={}
+					aHdPerda:={}
+					lSavePerda:=.F.
+				EndIf
+			Endif
+
+			If lConsumo
+				//Faz o consumo dos componentes.
+				nPosItems := aScan(aConsumo,{|x|Upper(AllTrim(x[1]))=="AUTITEMS"})
+				If nPosItems > 0 .And. Len(aConsumo[nPosItems,2]) > 0
+
+					EmpMESAju(aConsumo, nPosItems)
+
+					//Adiciona o campo D3_IDENT
+					aAdd(aConsumo, {"D3_IDENT",SH6->H6_IDENT,Nil})
+					For nI := 1 To Len(aConsumo[nPosItems,2])
+						aAdd(aConsumo[nPosItems,2,nI],{"D3_IDENT",SH6->H6_IDENT,Nil})
+					Next nI
+					MSEXECAUTO({|x,y|MATA241(x,y)},aConsumo,aConsumo[nPosItems,2])
+					If lMSErroAuto
+						If !IsBlind()
+							MostraErro()
+						EndIf
+						lRet := .F.
+					EndIf
+					//Atualiza a SD4
+					atuEmpMes(aConsumo[nPosItems,2],"S")
+				EndIf
+			EndIf
+			If lCoProduto
+				//Co-produto - faz a entrada do material.
+				nPosItems := aScan(aCoProduto,{|x|Upper(AllTrim(x[1]))=="AUTITEMS"})
+				If nPosItems > 0 .And. Len(aCoProduto[nPosItems,2]) > 0
+					//Adiciona o campo D3_IDENT
+					aAdd(aCoProduto, {"D3_IDENT",SH6->H6_IDENT,Nil})
+					For nI := 1 To Len(aCoProduto[nPosItems,2])
+						aAdd(aCoProduto[nPosItems,2,nI],{"D3_IDENT",SH6->H6_IDENT,Nil})
+					Next nI
+					MSEXECAUTO({|x,y|MATA241(x,y)},aCoProduto,aCoProduto[nPosItems,2])
+					If lMSErroAuto
+						If !IsBlind()
+							MostraErro()
+						EndIf
+						lRet := .F.
+					EndIf
+					//Atualiza a SD4
+					atuEmpMes(aCoProduto[nPosItems,2],"E")
+				EndIf
+
+			EndIf
+
+			//Michele - QIP -- Alteração
+			If A680UltOper() .Or. lEncerraOP
+				SB1->(dbSetOrder(1))
+				SB1->(MsSeek(xFilial("SB1") + SH6->H6_PRODUTO))
+				If ExistBlock("MT680QUA")
+					lMT680QUA := ExecBlock("MT680QUA",.F.,.F.)
+					If ValType(lMT680QUA)<> "L"
+						lMT680QUA :=.F.
+					EndIf
+				EndIf
+				If IntQIP(SH6->H6_PRODUTO,"2") .and.  lMT680QUA
+					SH6->H6_VERIFI := Iif (SH6->H6_LOCAL = GetMV('MV_CQ'),1,2)
+					QIPAtualiza("SH6",1)
+				EndIf
+			EndIf
+		Endif
+
+		//APT.PENDENTE
+		IF l681Auto
+			nPosGrv:= aScan(aRotAuto,{|x| x[1] == "GRAVA"})
+			IF  cPCPPEND <> '1' .AND. nPosGrv >0   //grava as pendências de apontamento para serem processadas posteriormente
+
+					lMsErroAuto := .T.
+
+					IF nPosGrv > 0
+						IF aRotAuto[nPosGrv,2] == "2"
+							AutoGrLog(STR0025) //"O Registro do arquivo SB2 encontra-se Bloqueado por outro Usuário!! "
+						ENDIF
+					ENDIF
+
+					IF cPcpPend == "3" // Todos apontamentos entram como pendentes
+						cMsgErro	:=  STR0023 //"3 - Grava todos apontamentos como pendentes	"
+						AutoGrLog(STR0023)
+					Endif
+
+
+				aPerda		:={}
+				aHdPerda	:={}
+				lSavePerda	:=.F.
+				disarmTransaction()
+
+				IF TableInDic("T4K") .AND. ! lMVpar
+					IF cPCPPEND # "4" // Quando for reprocessa, não precissa gravar na tabelas
+						IF cPcpPend # "3"
+							cMsgErro	:= ErrosApt()
+						ENDIF
+						a250GrvPnd(aCloneAuto,STR0024, cMsgErro) //"MATA681"
+						lGravaPen	:= .T. // Sinaliza que já gravou o pedido com pendente
+					EndIf
+				EndIf
+
+				Return
+			EndIf
+
+		EndIf
+
+		If hasDicCRP()
+			MATA681ApontamentoCRP():inativaHWF()
+		EndIf
+	EndIf
+End Transaction
+
+
+if l681Auto
+	If nPosGrv = 0
+		nPosGrv:= aScan(aRotAuto,{|x| x[1] == "GRAVA"})
+	Endif
+
+	IF  cPCPPEND <> '1' .AND. nPosGrv >0  //grava as pendências de apontamento para serem processadas posteriormente
+
+		lMsErroAuto := .T.
+
+			IF nPosGrv > 0
+				IF aRotAuto[nPosGrv,2] == "2"
+					AutoGrLog(STR0025) //"O Registro do arquivo SB2 encontra-se Bloqueado por outro Usuário!! "
+				ENDIF
+			ENDIF
+
+			IF cPcpPend == "3" // Todos apontamentos entram como pendentes
+				cMsgErro	:=  STR0023 //"3 - Grava todos apontamentos como pendentes	"
+				AutoGrLog(STR0023)
+			Endif
+
+		aPerda		:={}
+		aHdPerda	:={}
+		lSavePerda	:=.F.
+
+		IF TableInDic("T4K") .AND. ! lMVpar
+			IF cPCPPEND # "4" // Quando for reprocessa, não precissa gravar na tabelas
+				IF cPcpPend # "3"
+					cMsgErro	:= ErrosApt()
+				ENDIF
+				a250GrvPnd(aCloneAuto,"MATA681", cMsgErro)
+				lGravaPen	:= .T. // Sinaliza que já gravou o pedido com pendente
+			EndIf
+		EndIf
+
+		Return
+	EndIf
+Endif
+
+If nOpca == 1
+	//-- Integrado ao wms devera avaliar as regras para convocacao do servico e disponibilizar os
+	//-- registros do SDB para convocacao, ou exibir as mensagens de erro WMS caso necessário
+	If IntWms() .And. A680UltOper()
+		WmsExeServ()
+	EndIf
+
+	If SH6->H6_PT == "T"
+		//Remove lock aplicado na A680TudoOk
+		UnLockByName("ENCOP"+SH6->(H6_OP+H6_OPERAC),.T.,.T.,.T.)
+	EndIf
+	If lMt681Inc
+		Execblock("MT681INC",.f.,.f.)
+	Endif
+
+	//If l681Auto .And. (AllTrim(FunName()) $ "SFCA316|SFCA310") DMANSMARTSQUAD1-20770 - Precisa abrir a tela da contabilização online quando for execauto, independente de ser pelo SFC ou não
+	If l681Auto
+		If cCusMed == "O"
+			If !lCriaHeader
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Inicializa perguntas deste programa                          ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ mv_par01 - Se mostra e permite digitar lancamentos contabeis   ³
+				//³ mv_par02 - Se deve aglutinar os lancamentos contabeis          ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				pergunte("MTA680",.F.)
+				IIF (lMVpar,MV_PAR04 := 1 , Nil)
+				lDigita   := Iif(mv_par01 == 1,.T.,.F.)
+				lAglutina := Iif(mv_par02 == 1,.T.,.F.)
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³ Se ele criou o arquivo de prova ele deve gravar o rodape'    ³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				RodaProva(nHdlPrv,nTotal)
+
+				//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+				//³Atualiza o código de diário³
+				//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+				If !Empty(aCtbDia)
+					cCodDiario := CtbaVerdia()
+					For nX := 1 to Len(aCtbDia)
+						aCtbDia[nX][3] := cCodDiario
+					Next nX
+				EndIf
+
+				cA100Incl(cArquivo,nHdlPrv,3,cLoteEst,lDigita,lAglutina,,,,,,aCtbDia)
+				lCriaHeader := .T.
+				KeyBoard Chr(27)
+			EndIf
+		EndIf
+	EndIf
+Else
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Ponto de Entrada após acionar o botão cancelar no Apontamento de Producao mod2³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If lMt681Can
+		Execblock("MT681CAN",.F.,.F.)
+	Endif
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Verifica se o custo medio e' calculado On-Line               ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If cCusMed == "O"
+		If !lCriaHeader
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ Inicializa perguntas deste programa                          ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ mv_par01 - Se mostra e permite digitar lancamentos contabeis   ³
+			//³ mv_par02 - Se deve aglutinar os lancamentos contabeis          ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			pergunte("MTA680",.F.)
+			IIF (lMVpar,MV_PAR04 := 1 , Nil)
+			lDigita   := Iif(mv_par01 == 1,.T.,.F.)
+			lAglutina := Iif(mv_par02 == 1,.T.,.F.)
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³ Se ele criou o arquivo de prova ele deve gravar o rodape'    ³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			RodaProva(nHdlPrv,nTotal)
+
+			//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+			//³Atualiza o código de diário³
+			//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+			If !Empty(aCtbDia)
+				cCodDiario := CtbaVerdia()
+				For nX := 1 to Len(aCtbDia)
+					aCtbDia[nX][3] := cCodDiario
+				Next nX
+			EndIf
+
+			cA100Incl(cArquivo,nHdlPrv,3,cLoteEst,lDigita,lAglutina,,,,,,aCtbDia)
+			lCriaHeader := .T.
+			KeyBoard Chr(27)
+		EndIf
+	EndIf
+EndIf
+
+If lIntNewMRP
+	//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+	//³ Chama integração com novo MRP                                ³
+	//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	If Len(aMRPxJson[1]) > 0
+		MATA650INT("INSERT", aMRPxJson[1])
+	EndIf
+	aSize(aMRPxJson[1], 0)
+	FreeObj(aMRPxJson[2])
+	aMRPxJson[2] := Nil
+	If lDelTBMRP
+		_lNewMRP := Nil
+	EndIf
+EndIf
+
+If hasDicCRP()
+
+	If _oApontCRP != Nil
+		_oApontCRP:destroy()
+		_oApontCRP := Nil
+	EndIf
+
+	Set Key VK_F8 To
+EndIf
+
+aPerda:={}
+aHdPerda:={}
+lSavePerda:=.F.
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Finaliza a gravacao dos lancamentos do SIGAPCO            ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+PcoFinLan("000152")
+
+Return
+
+/*
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ FAtiva   ³ Autor ³ Cristina Ogura        ³ Data ³ 04.01.96 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Executa a Funcao da Pergunte                               ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function FAtiva()
+PERGUNTE("MTA680",.T.)
+Return .T.
+
+/*/
+ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Programa  ³MenuDef   ³ Autor ³ Fabio Alves Silva     ³ Data ³09/11/2006³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Utilizacao de menu Funcional                               ³±±
+±±³          ³                                                            ³±±
+±±³          ³                                                            ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Retorno   ³Array com opcoes da rotina.                                 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³Parametros do array a Rotina:                               ³±±
+±±³          ³1. Nome a aparecer no cabecalho                             ³±±
+±±³          ³2. Nome da Rotina associada                                 ³±±
+±±³          ³3. Reservado                                                ³±±
+±±³          ³4. Tipo de Transa‡„o a ser efetuada:                        ³±±
+±±³          ³		1 - Pesquisa e Posiciona em um Banco de Dados           ³±±
+±±³          ³    2 - Simplesmente Mostra os Campos                       ³±±
+±±³          ³    3 - Inclui registros no Bancos de Dados                 ³±±
+±±³          ³    4 - Altera o registro corrente                          ³±±
+±±³          ³    5 - Remove o registro corrente do Banco de Dados        ³±±
+±±³          ³5. Nivel de acesso                                          ³±±
+±±³          ³6. Habilita Menu Funcional                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³   DATA   ³ Programador   ³Manutencao efetuada                         ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³          ³               ³                                            ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+/*/
+
+Static Function MenuDef()
+PRIVATE aRotina	:= { {STR0001,"AxPesqui"  , 0 , 1, 0, .F.},;	//"Pesquisar"
+						{STR0002,"A681Visual", 0 , 2, 0, nil},;	//"Visualizar"
+						{STR0003,"A681Inclui", 0 , 3, 0, nil},;	//"Incluir"
+						{STR0013,"A680Altera", 0 , 4, 0, nil},;	//"Horas Retr."
+						{STR0004,"A680Deleta", 0 , 5, 0, nil},;	//"Estornar"
+						{STR0014,"A680Encer", 0 , 7, 0, nil} }
+
+//ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+//³ Ponto de entrada utilizado para inserir novas opcoes no array aRotina  ³
+//ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+If ExistBlock("MTA681MNU")
+	ExecBlock("MTA681MNU",.F.,.F.)
+EndIf
+Return(aRotina)
+
+/*ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³A681DtVali³ Autor ³	   Bruno Schmidt	³ Data ³ 05/10/12 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Consiste se a data de validade do Lote/Sub-Lote esta sendo ³±±
+±±³          ³ digitada corretamente                                      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Sintaxe   ³ A681DtVali(ExpL1)                                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ ExpL1 = Se verdadeiro, podera' exibir msg de help          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Retorno   ³ .T. / .F.                                                  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ Generico                                                   ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+Function A681DtVali(lHelp)
+Local cVar:=ReadVar(),cConteudo:=&(ReadVar())
+Local cAlias:=Alias(),nRecno:=Recno(),nOrdem:=IndexOrd()
+Local lRet:=.T.
+Local cCod,cLocal,cLote,cLoteDigi
+Local lLoteVenc	:= SuperGetMV("MV_LOTVENC") == "S"
+
+Default lHelp := .T.
+
+cCod      := M->H6_PRODUTO
+cLocal    := M->H6_LOCAL
+cLote	  := M->H6_NUMLOTE
+cLoteDigi := M->H6_LOTECTL
+
+If !Rastro(cCod)
+	Help(" ",1,"NAORASTRO")
+	lRet:=.F.
+EndIf
+
+If lRet .And. cConteudo < dDataBase .And. !Empty(cConteudo)
+	//-- Verifica se permite a digitacao de datas de validade vencidas
+	If lLoteVenc
+		If lHelp
+			//-- Avisa ao usuario que a data de validade esta
+			//-- vencida, porem permite a movimentacao.
+			HelpAutoma(" ",1,"LOTEVENC")
+		EndIf
+	Else
+		If lHelp
+			HelpAutoma(" ",1,"DTVALIDINV")
+		EndIf
+		lRet:=.F.
+	EndIf
+EndIf
+
+If lRet
+	dbSelectArea("SB8")
+	dbSetOrder(3)
+	If dbSeek(xFilial()+cCod+cLocal+cLoteDigi+IIf(Rastro(cCod,"S"),cLote,""))
+		If cConteudo # SB8->B8_DTVALID
+			If	lHelp
+				HelpAutoma(" ",1,"A240DTVALI",,,,,,,,,.F.)
+			EndIf
+			M->H6_DTVALID:=SB8->B8_DTVALID
+			&(ReadVar()):=SB8->B8_DTVALID
+		EndIf
+	EndIf
+EndIf
+dbSelectArea(cAlias)
+dbSetOrder(nOrdem)
+dbGoTo(nRecno)
+
+Return lRet
+
+/*ÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜÜ
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡„o    ³A681ACDPT ³ Autor ³	   Materiais    	³ Data ³ 20/02/15 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ Define se apontamento irah encerrar OP por completo        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Retorno   ³ .T. - Encerra / .F. - nao encerra                          ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Uso       ³ SIGAACD                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß*/
+
+Function A681ACDPT(cOp,cProd,cOperac)
+Local aAreaAnt  := GetArea()
+Local lRet      := .F.
+Local cAliasTmp	:= GetNextAlias()
+Local cQuery    := ''
+
+cQuery := "SELECT SH6.H6_QTDPROD , SH6.H6_QTDPERD "
+cQuery += "FROM "+ RetSqlName("SH6")+" SH6 WHERE "
+cQuery += "SH6.H6_FILIAL  = '" + xFilial('SH6') + "' AND "
+cQuery += "SH6.H6_OP 	  = '" + cOP            + "' AND "
+cQuery += "SH6.H6_PRODUTO = '" + cProd          + "' AND "
+cQuery += "SH6.H6_OPERAC  = '" + cOperac        + "' AND "
+cQuery += "SH6.H6_QTDPROD > SH6.H6_QTDPERD 		     AND "
+cQuery += "SH6.D_E_L_E_T_ = ' ' "
+
+cQuery := ChangeQuery(cQuery)
+dbUseArea(.T.,"TOPCONN",TcGenQry(,,cQuery),cAliasTmp,.T.,.T.)
+
+If (cAliasTmp)->(! Eof() )
+	lRet := .T.
+EndIf
+
+(cAliasTmp)->(DbCloseArea())
+RestArea(aAreaAnt)
+Return lRet
+
+/*
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ A681DTVAL ³ Autor ³ preima        ³ Data ³ 22/06/2016      ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ validação de data de validade									 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ Nenhum                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ MATA681                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Function A681DTVAL()
+Local lRet := .T.
+
+If IsInCallStack('MATA681')
+	lRet := A681DtVali()
+ElseIf IsInCallStack('MATA680')
+	lRet := (Empty(M->H6_DTVALID) .And. Empty(M->H6_LOTECTL)) .Or. (M->H6_DTVALID >= dDataBase .And. !Empty(M->H6_LOTECTL))
+Endif
+
+Return lRet
+
+/*
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ A681SXB ³ Autor ³ preima        ³ Data ³ 22/06/2016        ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ consulta padrão de ordem de produção							 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ Nenhum                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ MATA681                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Function A681SXB()
+
+Return(ConPad1(,,,If(IsInCallStack('MATA680'), "SH8", "SC2")))
+
+//-------------------------------------------------------------------------------------------------
+/*/{Protheus.doc} atuEmpMes
+
+Atualiza os empenhos, quando é realizado o apontamento pela integração Totvs MES,
+e é utilizado consumo real.
+
+@param aProdutos	- Array com os produtos que terão o empenho atualizado
+@param cTipo			- Tipo do movimento:	"E" - Entrada de produtos. (Componente negativo na estrutura/Co-produto);
+															"S" - Saída de produtos. (Consumo de componentes).
+
+@author  Lucas Konrad França
+@version P12
+@since   09/02/2017
+/*/
+//-------------------------------------------------------------------------------------------------
+Function atuEmpMes(aProdutos,cTipo)
+	Local nI      := 0
+	Local nPos    := 0
+	Local nQuant  := 0
+	Local nQtdAtu := 0
+	Local cProd   := ""
+	Local cLocal  := ""
+	Local cOp     := ""
+	Local cLote   := ""
+	Local cSeek   := ""
+
+	SD4->(dbSetOrder(2))
+	For nI := 1 To Len(aProdutos)
+		nPos := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_COD"})
+		If nPos > 0
+			cProd := aProdutos[nI,nPos,2]
+		EndIf
+		nPos := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_QUANT"})
+		If nPos > 0
+			nQuant := aProdutos[nI,nPos,2]
+		EndIf
+		nPos := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_LOCAL"})
+		If nPos > 0
+			cLocal:= aProdutos[nI,nPos,2]
+		EndIf
+		nPos := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_OP"})
+		If nPos > 0
+			cOp := aProdutos[nI,nPos,2]
+		EndIf
+		nPos := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_LOTECTL"})
+		If nPos > 0
+			cLote := aProdutos[nI,nPos,2]
+		EndIf
+
+		cSeek := xFilial("SD4")+Padr(cOp,TamSX3("D4_OP")[1])+Padr(cProd,TamSX3("D4_COD")[1])+Padr(cLocal,TamSX3("D4_LOCAL")[1])
+
+		If SD4->(dbSeek(cSeek))
+			If cTipo == "S"
+				//Consumo de componentes
+				While SD4->(!Eof()) .And. SD4->(D4_FILIAL+D4_OP+D4_COD+D4_LOCAL) == cSeek .And. nQuant > 0
+					//Se a sequência (TRT) estiver em branco, já foi feita a atualização do empenho
+					//pelo mata241.
+					If Empty(SD4->D4_TRT)
+						SD4->(dbSkip())
+						Loop
+					EndIf
+					If AllTrim(cLote) == AllTrim(SD4->D4_LOTECTL) .And. SD4->D4_QUANT > 0
+						If SD4->D4_QUANT-nQuant >= 0
+							nQtdAtu := SD4->D4_QUANT-nQuant
+							nQuant  := 0
+						Else
+							nQtdAtu := 0
+							nQuant  := nQuant - SD4->D4_QUANT
+						EndIf
+						RecLock("SD4",.F.)
+							SD4->D4_QUANT := nQtdAtu
+						MsUnLock()
+						//Atualiza o campo B2_QEMP
+						DbSelectArea("SB2")
+						DbSetOrder(1)
+						If SB2->(dbSeek(xFilial("SB2")+SD4->D4_COD + SD4->D4_LOCAL))
+							RecLock("SB2",.F.)
+								SB2->B2_QEMP := nQtdAtu
+							MsUnLock()
+						EndIf
+						SB2->(dbclosearea())
+						//Atualiza o campo B8_QEMP
+						If !Empty(SD4->D4_LOTECTL)
+							DbSelectArea("SB8")
+							DbSetOrder(1)
+							If SB8->(dbSeek(xFilial("SB8")+SD4->(D4_COD+D4_LOCAL+DTOS(D4_DTVALID)+D4_LOTECTL)))
+								RecLock("SB8",.F.)
+									SB8->B8_EMPENHO  := nQtdAtu
+								MsUnLock()
+							EndIf
+							SB8->(dbclosearea())
+						EndIf
+						DbSelectArea("SDC")
+						DbSetOrder(2)
+						If SDC->(dbSeek(xFilial("SDC")+SD4->(D4_COD+D4_LOCAL+D4_OP)))
+							DbSelectArea("SBF")
+							DbSetOrder(2)
+							If SBF->(dbSeek(xFilial("SBF")+SD4->(D4_COD+D4_LOCAL+D4_LOTECTL)))
+								RecLock("SBF",.F.)
+								SBF->BF_EMPENHO  := nQtdAtu
+								MsUnLock()
+								SBF->(dbclosearea())
+							EndIf
+							SDC->(dbclosearea())
+						EndIf
+					EndIf
+					SD4->(dbSkip())
+				End
+			ElseIf cTipo == "E"
+				//Co-produto
+				While SD4->(!Eof()) .And. SD4->(D4_FILIAL+D4_OP+D4_COD+D4_LOCAL) == cSeek .And. nQuant > 0
+					//Se a sequência (TRT) estiver em branco, já foi feita a atualização do empenho
+					//pelo mata241.
+					If Empty(SD4->D4_TRT)
+						SD4->(dbSkip())
+						Loop
+					EndIf
+					If AllTrim(cLote) == AllTrim(SD4->D4_LOTECTL) .And. SD4->D4_QUANT < 0
+						If SD4->D4_QUANT+nQuant <= 0
+							nQtdAtu := SD4->D4_QUANT+nQuant
+							nQuant  := 0
+						Else
+							nQtdAtu := 0
+							nQuant  := nQuant + SD4->D4_QUANT
+						EndIf
+						RecLock("SD4",.F.)
+							SD4->D4_QUANT := nQtdAtu
+						MsUnLock()
+					EndIf
+					SD4->(dbSkip())
+				End
+			EndIf
+		EndIf
+	Next nI
+Return
+
+/*
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+±±ÚÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄ¿±±
+±±³Fun‡…o    ³ A681ShowF4 ³ Autor ³Michelle Ramos³     Data ³ 12/09/2017  ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Descri‡…o ³ consulta padrão de ordem de produção/saldos  				 ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³Parametros³ Nenhum                                                     ³±±
+±±ÃÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´±±
+±±³ Uso      ³ MATA681                                                    ³±±
+±±ÀÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ±±
+±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±±
+ßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßßß
+*/
+Static Function A681ShowF4()
+Local cCampo:=AllTrim(Upper(ReadVar()))
+If cCampo == "M->H6_PRODUTO" .Or. cCampo == "M->H6_QTDPROD"
+	MaViewSB2(M->H6_PRODUTO)
+ElseIf cCampo == "M->H6_OP"
+	A680ShowOp()
+EndIf
+
+Return NIL
+
+//-------------------------------------------------------------------
+/*/{Protheus.doc} ErrosApt
+Busca Erros dos apontamentos
+@author  Thiago.Zoppi
+@since   07/05/2019
+/*/
+//-------------------------------------------------------------------
+Function ErrosApt()
+Local cFileLog	:= NomeAutoLog()
+Local cMsgErro	:= ""
+Local aerroAut  := {}
+local ny
+If ( Type( 'lAutoErrNoFile' ) == 'L' ) .And. ( lAutoErrNoFile )
+   aerroAut := VarAutoLog()
+	For ny := 1 To Len(aerroAut)
+		cMsgErro += aerroAut[ny] + Chr(13)+Chr(10)
+	Next ny
+Else
+	cMsgErro :=MemoRead(cFileLog)
+EndIf
+
+Return cMsgErro
+
+//-------------------------------------------------------------------------------------------------
+/*/{Protheus.doc} EmpMESAju
+
+Ajusta o saldo do empenho.
+Caso não tenha saldo disponível para realizar a requisição, será alterado o saldo do empenho.
+
+@param aProdutos - Array com os produtos que serão movimentados
+
+@author  Michele Girardi
+@version P12
+@since   13/10/2020
+/*/
+//-------------------------------------------------------------------------------------------------
+Function EmpMESAju(aProdutos1,nPosItems)
+
+Local nI      := 0
+Local nX      := 0
+Local nQuant  := 0
+Local nQtdAtu := 0
+Local cProd   := ""
+Local cLocal  := ""
+Local cOp     := ""
+Local cLote   := ""
+Local cSeek   := ""
+
+Local nAchou1 := 0
+Local nAchou2 := 0
+
+Local nPosCod := 0
+Local nPosQuant := 0
+Local nPosLoc := 0
+Local nPosOp := 0
+Local nPosLote := 0
+
+Local bCampo 	 := {|nCPO| Field(nCPO) }
+
+Local aComps  := {}
+Local aInclui := {}
+Local aProdutos := {}
+
+SOE->(dbSeek(xFilial("SOE")+"SC2"))
+If AllTrim(SOE->OE_VAR1) != "3"
+	Return nil
+EndIf
+
+SD4->(dbSetOrder(2))
+cSeek := xFilial("SD4")+Padr(SH6->H6_OP,TamSX3("D4_OP")[1])
+If SD4->(dbSeek(cSeek))
+	While SD4->(!Eof()) .And. SD4->(D4_FILIAL+D4_OP) == cSeek
+		AADD(aComps, {AllTrim(SD4->D4_OP), AllTrim(SD4->D4_COD), AllTrim(SD4->D4_TRT), AllTrim(SD4->D4_LOCAL), AllTrim(SD4->D4_LOTECTL), SD4->D4_QUANT, SD4->D4_QUANT})
+		SD4->(dbSkip())
+	End
+EndIf
+
+aProdutos := aProdutos1[nPosItems,2]
+
+For nI := 1 To Len(aProdutos)
+	nQtdAtu := 0
+	nPosCod := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_COD"})
+	If nPosCod > 0
+		cProd := AllTrim(aProdutos[nI,nPosCod,2])
+	EndIf
+
+	nPosQuant := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_QUANT"})
+	If nPosQuant > 0
+		nQuant := aProdutos[nI,nPosQuant,2]
+	EndIf
+
+	nPosLoc := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_LOCAL"})
+	If nPosLoc > 0
+		cLocal:= AllTrim(aProdutos[nI,nPosLoc,2])
+	EndIf
+
+	nPosOp := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_OP"})
+	If nPosOp > 0
+		cOp := AllTrim(aProdutos[nI,nPosOp,2])
+	EndIf
+
+	nPosLote := aScan(aProdutos[nI],{|x|Upper(AllTrim(x[1]))=="D3_LOTECTL"})
+	If nPosLote > 0
+		cLote := AllTrim(aProdutos[nI,nPosLote,2])
+	EndIf
+
+ 	If Rastro(cProd)
+		//Verifica se existe empenho para o lote
+		nAchou1 := aScan(aComps,{|x| x[1]==cOp .And. x[2]==cProd .And. x[4]==cLocal .And. x[5]==cLote})
+	EndIf
+
+	//nAchou1 > 0 -- encontrou empenho com o lote.
+	//nesse caso não atualiza empenho
+	//irá atualizar o empenho somente quando não existir lote empenhado.
+
+	If nAchou1==0
+		//Verifica se existe empenho sem o lote
+		nAchou2 := aScan(aComps,{|x| x[1]==cOp .And. x[2]==cProd .And. x[4]==cLocal .And. Empty(x[5])})
+	EndIf
+
+	If nAchou2 > 0
+		If aComps[nAchou2,6] >= nQuant .And. aComps[nAchou2,7] > 0
+			If aComps[nAchou2,7] >= nQuant
+				aComps[nAchou2,7] -= nQuant
+			Else
+				nQtdAtu := nQuant - aComps[nAchou2,7]
+				aComps[nAchou2,7] := 0
+			EndIf
+		Else
+			If aComps[nAchou2,6] > 0 .And. aComps[nAchou2,7] > 0
+				nQtdAtu := nQuant - aComps[nAchou2,7]
+				aComps[nAchou2,7] := 0
+			Else
+				nQtdAtu := nQuant
+			EndIf
+		EndIf
+	EndIf
+
+	//Inclui no array para incluir saldo
+	If nAchou2 > 0 .And. nQtdAtu > 0
+		AADD(aInclui, {cOp, cProd, cLocal, nQtdAtu,nAchou1,nAchou2})
+	EndIf
+End
+
+For nI := 1 To Len(aInclui)
+
+	SD4->(dbSetOrder(2))
+	cSeek := xFilial("SD4")+Padr(aInclui[nI,1],TamSX3("D4_OP")[1])+Padr(aInclui[nI,2],TamSX3("D4_COD")[1])+Padr(aInclui[nI,3],TamSX3("D4_LOCAL")[1])
+
+	If SD4->(dbSeek(cSeek))
+
+		While SD4->(!Eof()) .And. SD4->(D4_FILIAL+D4_OP+D4_COD+D4_LOCAL) == cSeek
+
+			If aInclui[nI,5] == 0 //Não existe empenho para o Lote.
+				If Empty(SD4->D4_LOTECTL)
+					RecLock("SD4",.F.)
+					SD4->D4_QTDEORI += aInclui[nI,4]
+					SD4->D4_QUANT   += aInclui[nI,4]
+					MsUnLock()
+
+					SB2->(dbSelectArea("SB2"))
+					SB2->(dbSeek(xFilial("SB2")+SD4->D4_COD+SD4->D4_LOCAL))
+					If SB2->(EOF())
+						CriaSB2(SD4->D4_COD,SD4->D4_LOCAL)
+					EndIf
+
+					RecLock("SB2",.F.)
+					Replace B2_QEMP  With B2_QEMP  + aInclui[nI,4]
+					MsUnlock()
+
+					Exit
+				EndIf
+			EndIf
+			SD4->(dbSkip())
+		End
+	EndIf
+End
+
+Return nil
+
+/*/{Protheus.doc} apontCRP
+Abre a tela de consulta de apontamentos do CRP.
+@type  Static Function
+@author Lucas Fagundes
+@since 30/11/2023
+@version P12
+@return Nil
+/*/
+Static Function apontCRP()
+
+	If _oApontCRP == Nil
+		_oApontCRP := MATA681ApontamentoCRP():new()
+	EndIf
+
+	_oApontCRP:abreTela()
+
+Return Nil
+
+/*/{Protheus.doc} hasDicCRP
+Verifica se possui a tabela do CRP no dicionario de dados.
+@type  Static Function
+@author Lucas Fagundes
+@since 11/12/2023
+@version P12
+@return _lDicCRP, Logico, Indica se possui a tabela do CRP.
+/*/
+Static Function hasDicCRP()
+
+	If _lDicCRP == Nil
+		_lDicCRP := FwAliasInDic("HWF", .F.)
+	EndIf
+
+Return _lDicCRP
